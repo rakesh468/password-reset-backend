@@ -1,4 +1,4 @@
-import express, { request, response } from "express";
+import express  from "express";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import { MongoClient } from "mongodb";
