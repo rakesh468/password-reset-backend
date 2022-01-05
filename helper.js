@@ -9,7 +9,7 @@ async function genpassword(password) {
   console.log(hashedpassword);
   return hashedpassword;
 }
-genpassword("password@123");
+// genpassword("password@123");
 
 // creating users using insertone ///
 async function createUser(data) {
