@@ -142,13 +142,13 @@ function Mail(token, email) {
     },
   });
 
-  const URL = `http://localhost:9200/forgotpassword/verify/${token}`;
+  const link = `http://localhost:9200/forgotpassword/verify/${token}`;
   // composing mail //
   const composemail = {
     from: process.env.email,
     to: email,
     subject: "send mail througn node js",
-    html: `<a href=${URL}>To reset password click the link</a>`,
+    html: `<a href=${link}>To reset password click the link</a>`,
   };
   // sending mail //
   sender.sendMail(composemail, (error, info) => {
