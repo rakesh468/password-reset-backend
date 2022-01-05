@@ -105,7 +105,7 @@ app.post("/forgotpassword", async (request, reponse) => {
 
 // verifying forgetpassword using get method //
 app.get("/forgotpassword/verify", async (request, response) => {
-  const token = await request.header("x-athu-token");
+  const token = request.header("x-athu-token");
   const verify = await getusername({ password: token });
   if (!verify) {
     response.status(401).send({ message: "Invalid Credentials" });
