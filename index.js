@@ -1,4 +1,4 @@
-import express, { response }  from "express";
+import express from "express";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import { MongoClient } from "mongodb";
@@ -11,6 +11,7 @@ import {
 } from "./helper.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+
 
 
 dotenv.config();
@@ -51,13 +52,14 @@ app.post("/signup", async (request, response) => {
     return;
   }
   const hashedpassword = await genpassword(password);
-  const result = await createUser({
+  const createusers = await createUser(
     username,
     email,
-    password: hashedpassword,
-  });
-  console.log(result);
-  response.send(result);
+    hashedpassword
+  );
+  console.log(createusers);
+  const userdata=await getusername(email)
+  response.send(userdata);
 });
 
 app.post("/signin", async (request, response) => {
@@ -74,39 +76,39 @@ app.post("/signin", async (request, response) => {
 
   const ispasswordmatch = await bcrypt.compare(password, storedpassword);
 
-  console.log(ispasswordmatch);
-
+  console.log(ispasswordmatch)
+// if passwordmatches token will be generated //
   if (ispasswordmatch) {
     const token = jwt.sign({ id: userfromdb._id }, process.env.SECRET_KEY);
     response.send({ message: "signed In successfully", token: token });
   } else {
-    response.send({ messgae: "Invalid Credentials" });
+    response.send({ message: "Invalid Credentials" });
   }
 });
 
 // post method for forgotpassword //
-app.post("/forgotpassword", async (request, reponse) => {
+app.post("/forgotpassword", async (request, response) => {
   const { email } = request.body;
   const userfromdb = await getusername(email);
   console.log(userfromdb);
 
   if (!userfromdb) {
-    reponse.status(401).send({ message: "Invalid Credentials" });
+    response.status(401).send({ message: "Invalid Credentials" });
   }
-  // token generated if email is in db //
+ // token generated if email is in db //
   const token = jwt.sign({ id: userfromdb._id }, process.env.SECRET_KEY);
   const replacepassword = await passwordUpdate({ email, token });
   console.log(replacepassword);
-  let updateresult = await getusername({ email });
+  let updatedResult = await getusername({ email });
 
-  // mail to reset password //
+  // Using nodemailer the token will be sent to the registered email
   Mail(token, email);
-   return response.send({ updateresult, token });
+   return response.send({ updatedResult, token });
 });
 
 // verifying forgetpassword using get method //
 app.get("/forgotpassword/verify", async (request, response) => {
-  const token = request.header("x-athu-token");
+  const token =await request.header("x-athu-token");
   const verify = await getusername({ password: token });
   if (!verify) {
     response.status(401).send({ message: "Invalid Credentials" });

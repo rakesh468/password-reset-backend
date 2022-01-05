@@ -9,14 +9,14 @@ async function genpassword(password) {
   console.log(hashedpassword);
   return hashedpassword;
 }
-// genpassword("password@123");
+
 
 // creating users using insertone ///
-async function createUser(data) {
-  return client.db("firefox").collection("users").insertOne(data);
+async function createUser(username, email, hashedPassword) {
+  return client.db("firefox").collection("users").insertOne({username, email, password:hashedPassword});
 }
 async function getusername(email) {
-  return client.db("firefox").collection("users").findOne({ email: email });
+  return client.db("firefox").collection("users").findOne({ email});
 }
 // updating pervious password ///
 async function passwordUpdate(data) {
@@ -24,7 +24,7 @@ async function passwordUpdate(data) {
   let result = await client
     .db("firefox")
     .collection("users")
-    .updateOne({ email }, { $set: { password: token } });
+    .updateOne({ email }, { $set: { password: token } })
   return result;
 }
 async function updateuser(data) {
