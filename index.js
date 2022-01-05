@@ -1,4 +1,4 @@
-import express  from "express";
+import express, { response }  from "express";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import { MongoClient } from "mongodb";
@@ -18,6 +18,7 @@ dotenv.config();
 const app = express();
 
 const PORT = process.env.PORT;
+console.log(process.env)
 app.use(express.json());
 
 const MONGO_URL = process.env.MONGO_URL;
@@ -100,7 +101,7 @@ app.post("/forgotpassword", async (request, reponse) => {
 
   // mail to reset password //
   Mail(token, email);
-  return response.send({ updateresult, token });
+   return response.send({ updateresult, token });
 });
 
 // verifying forgetpassword using get method //
@@ -127,6 +128,7 @@ app.post("/resetpassword", async (request, response) => {
   const { email } = userfromdb;
   const hashedpassword = await genpassword(password);
   const passwordUpdate = await updateuser({ email, password: hashedpassword });
+  console.log(passwordUpdate);
   const result = await getusername({ email });
   response.send(result);
 });
