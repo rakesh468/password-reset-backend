@@ -19,7 +19,7 @@ dotenv.config();
 const app = express();
 
 const PORT = process.env.PORT;
-console.log(process.env)
+
 app.use(express.json());
 
 const MONGO_URL = process.env.MONGO_URL;
@@ -99,16 +99,16 @@ app.post("/forgotpassword", async (request, response) => {
   const token = jwt.sign({ id: userfromdb._id }, process.env.SECRET_KEY);
   const replacepassword = await passwordUpdate({ email, token });
   console.log(replacepassword);
-  let updatedResult = await getusername({ email });
+  // const updatedResult = await getusername({ email });
 
   // Using nodemailer the token will be sent to the registered email
   Mail(token, email);
-   return response.send({ updatedResult, token });
+   return response.send({ replacepassword, token });
 });
 
 // verifying forgetpassword using get method //
 app.get("/forgotpassword/verify", async (request, response) => {
-  const token =await request.header("x-athu-token");
+  const token =request.header("x-athu-token");
   const verify = await getusername({ password: token });
   if (!verify) {
     response.status(401).send({ message: "Invalid Credentials" });
@@ -123,7 +123,7 @@ app.post("/resetpassword", async (request, response) => {
   if (password.length < 8) {
     return response.status(401).send("password must be Longer");
   }
-  const userfromdb = await getusername({ passsword: token });
+  const userfromdb = await getusername({ password: token });
   if (!userfromdb) {
     return response.status(401).send({ messgae: "Invalid Credentials" });
   }
@@ -139,7 +139,7 @@ app.post("/resetpassword", async (request, response) => {
 function Mail(token, email) {
   // transposrting mail //
   const sender = nodemailer.createTransport({
-    service: "gmail",
+    service:"gmail",
     auth: {
       user: process.env.email,
       pass: process.env.password,

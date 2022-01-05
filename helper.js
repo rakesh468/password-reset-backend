@@ -36,4 +36,5 @@ async function updateuser(data) {
   return result;
 }
 
+
 export { genpassword, createUser, getusername, passwordUpdate, updateuser };
